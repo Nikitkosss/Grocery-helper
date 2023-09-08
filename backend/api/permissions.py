@@ -2,7 +2,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class AuthorOrReadOnly(BasePermission):
-    def has_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         user = request.user
         return (
             request.method in SAFE_METHODS
