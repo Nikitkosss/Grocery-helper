@@ -1,38 +1,16 @@
-from django.contrib.admin import register
-from django.contrib.auth.admin import UserAdmin
+from django.contrib import admin
 
-from users.models import MyUser
+from .models import User
 
 
-@register(MyUser)
-class MyUserAdmin(UserAdmin):
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
     list_display = (
-        "is_active",
-        "username",
-        "first_name",
-        "last_name",
-        "email",
+        'id',
+        'username',
+        'email',
+        'first_name',
+        'last_name',
     )
-    fields = (
-        ("is_active",),
-        (
-            "username",
-            "email",
-        ),
-        (
-            "first_name",
-            "last_name",
-        ),
-    )
-    fieldsets = []
-
-    search_fields = (
-        "username",
-        "email",
-    )
-    list_filter = (
-        "is_active",
-        "first_name",
-        "email",
-    )
-    save_on_top = True
+    list_filter = ('email', 'username',)
+    search_fields = ('email', 'username',)

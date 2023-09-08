@@ -1,112 +1,67 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (CASCADE, BooleanField, CharField,
-                              CheckConstraint, DateTimeField, EmailField, F,
-                              ForeignKey, Model, Q, UniqueConstraint)
-from django.db.models.functions import Length
-from django.utils.translation import gettext_lazy as _
-
-from api.enums import Limits
-from api.validators import MinLenValidator, OneOfTwoValidator
-
-CharField.register_lookup(Length)
+from django.db import models
 
 
-class MyUser(AbstractUser):
-
-    email = EmailField(
-        verbose_name="Адрес электронной почты",
-        max_length=Limits.MAX_LEN_EMAIL_FIELD.value,
+class User(AbstractUser):
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username',)
+    email = models.EmailField(
+        verbose_name='Почтовый адрес',
+        max_length=254,
         unique=True,
     )
-    username = CharField(
-        verbose_name="Уникальный юзернейм",
-        max_length=Limits.MAX_LEN_USERS_CHARFIELD.value,
+    username = models.CharField(
+        verbose_name='Уникальный юзернейм',
+        max_length=100,
         unique=True,
-        validators=(
-            MinLenValidator(
-                min_len=Limits.MIN_LEN_USERNAME,
-                field="username",
-            ),
-            OneOfTwoValidator(field="username"),
-        ),
     )
-    first_name = CharField(
-        verbose_name="Имя",
-        max_length=Limits.MAX_LEN_USERS_CHARFIELD.value,
-        validators=(
-            OneOfTwoValidator(
-                first_regex="[^а-яёА-ЯЁ -]+",
-                second_regex="[^a-zA-Z -]+",
-                field="Имя",
-            ),
-        ),
+    first_name = models.CharField(
+        verbose_name='Имя',
+        max_length=100,
     )
-    last_name = CharField(
-        verbose_name="Фамилия",
-        max_length=Limits.MAX_LEN_USERS_CHARFIELD.value,
-        validators=(
-            OneOfTwoValidator(
-                first_regex="[^а-яёА-ЯЁ -]+",
-                second_regex="[^a-zA-Z -]+",
-                field="Фамилия",
-            ),
-        ),
+    last_name = models.CharField(
+        verbose_name='Фамилия',
+        max_length=100,
     )
-    password = CharField(
-        verbose_name=_("Пароль"),
-        max_length=Limits.MAX_LEN_USERS_PASSWORD_FIELD.value,
-    )
-    is_active = BooleanField(
-        verbose_name="Активирован",
-        default=True,
+    password = models.CharField(
+        verbose_name='Пароль',
+        max_length=128,
     )
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
-        ordering = ("username",)
-        constraints = (
-            CheckConstraint(
-                check=Q(username__length__gte=Limits.MIN_LEN_USERNAME.value),
-                name="\nusername is too short\n",
-            ),
-        )
+        ordering = ('username',)
+        verbose_name = 'Пользователь'
 
     def __str__(self):
-        return f"{self.username}: {self.email}"
+        return self.username
 
 
-class Subscriptions(Model):
-    author = ForeignKey(
-        verbose_name="Автор рецепта",
-        related_name="subscribers",
-        to=MyUser,
-        on_delete=CASCADE,
+class Subscriptions(models.Model):
+    author = models.ForeignKey(
+        User,
+        verbose_name='Автор рецепта',
+        related_name='subscribers',
+        on_delete=models.CASCADE,
     )
-    user = ForeignKey(
-        verbose_name="Подписчики",
-        related_name="subscriptions",
-        to=MyUser,
-        on_delete=CASCADE,
-    )
-    date_added = DateTimeField(
-        verbose_name="Дата создания подписки",
-        auto_now_add=True,
-        editable=False,
+    user = models.ForeignKey(
+        User,
+        verbose_name='Подписчики',
+        related_name='subscriptions',
+        on_delete=models.CASCADE,
     )
 
     class Meta:
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
+        verbose_name = 'Подписка'
         constraints = (
-            UniqueConstraint(
-                fields=("author", "user"),
-                name="\nRepeat subscription\n",
+            models.UniqueConstraint(
+                fields=('user', 'author',),
+                name='Уникальность подписки'
             ),
-            CheckConstraint(
-                check=~Q(author=F("user")), name="\nNo self sibscription\n"
-            ),
+            models.CheckConstraint(
+                check=models.Q(user=models.F('author')),
+                name='Проверка самоподписки'
+            )
         )
 
     def __str__(self):
-        return f"{self.user.username} -> {self.author.username}"
+        return self.user
