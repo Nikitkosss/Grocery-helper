@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
                             Recipe, Tag)
-from users.models import Subscriptions
 
 
 @admin.register(Ingredient)
@@ -46,10 +45,3 @@ class FavoriteAdmin(admin.ModelAdmin):
 class CartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'item', )
     search_fields = ('user', 'item', )
-
-
-@admin.register(Subscriptions)
-class SubscriptionsAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'user', 'author',)
-    list_editable = ('user', 'author')
