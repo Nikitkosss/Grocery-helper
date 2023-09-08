@@ -99,14 +99,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         if self.context['request'].user.is_authenticated:
             return Cart.objects.filter(
                 user=self.context['request'].user, recipe=obj
-                ).exists
+            ).exists
         return False
 
     def get_is_favorite(self, obj):
         if self.context['request'].user.is_authenticated:
             return Favorite.objects.filter(
                 user=self.context['request'].user, recipe=obj
-                ).exists
+            ).exists
         return False
 
 
