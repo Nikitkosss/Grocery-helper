@@ -1,9 +1,9 @@
 import csv
 import os
 
-from django.db.utils import IntegrityError
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
 
 from recipes.models import Ingredient
 
@@ -20,11 +20,11 @@ class Command(BaseCommand):
             reader = csv.reader(file)
             next(reader)
             for row in reader:
-                name, measurement_unit = row
+                name, units = row
                 try:
                     Ingredient.objects.create(
                         name=name,
-                        measurement_unit=measurement_unit
+                        units=units
                     )
                 except IntegrityError:
                     self.stdout.write(
