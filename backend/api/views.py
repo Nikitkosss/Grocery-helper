@@ -52,9 +52,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            return self.recipe_add(Favorite, request, pk)
-        return self.recipe_delete(Favorite, request, pk)
+            return Favorite.objects.create(user=user, recipe=recipe)
+        return Favorite.objects.filter(user=user, recipe=recipe).delete()
 
     @action(
         detail=True,
@@ -62,9 +64,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def cart(self, request, pk=None):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            return self.recipe_add(Cart, request, pk)
-        return self.recipe_delete(Cart, request, pk)
+            return Cart.objects.create(user=user, recipe=recipe)
+        return Cart.objects.create(user=user, recipe=recipe).delete()
 
     @action(
         detail=False,
@@ -74,7 +78,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_cart(self, request):
         user = request.user
         ingredients = IngredientAmount.objects.filter(
-            recipe__shopping_cart__user=user).values(
+            recipe__cart__user=user).values(
             'ingredient__name',
             'ingredient__units').annotate(
             amount=Sum('amount')

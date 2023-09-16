@@ -14,6 +14,7 @@ class Command(BaseCommand):
     help = 'Загрузка из csv'
 
     def handle(self, *args, **kwargs):
+        ingredients = []
         with open(
             os.path.join(FILE_DIR, 'ingredients.csv'), 'r', encoding='utf-8'
         ) as file:
@@ -21,13 +22,17 @@ class Command(BaseCommand):
             next(reader)
             for row in reader:
                 name, units = row
+                ingredients.append(
+                    Ingredient(name=name, units=units)
+                )
+        try:
+            Ingredient.objects.bulk_create(ingredients)
+        except IntegrityError:
+            for ingredient in ingredients:
                 try:
-                    Ingredient.objects.create(
-                        name=name,
-                        units=units
-                    )
+                    ingredient.save()
                 except IntegrityError:
                     self.stdout.write(
-                        f'Ингредиент {name} уже существует в базе данных'
+                        f'Ингредиент {ingredient.name} уже существует'
                     )
         self.stdout.write(self.style.SUCCESS('Ингридиенты загружены!'))

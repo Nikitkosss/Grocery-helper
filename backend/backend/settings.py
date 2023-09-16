@@ -7,11 +7,17 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', '@pcsp&suowFN@6SZ3WHIaJFJmzuESUo0&B&bR5rzWk1l')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    '@pcsp&suowFN@6SZ3WHIaJFJmzuESUo0&B&bR5rzWk1l'
+)
 
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '123.123.0.123,123.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS',
+    '123.123.0.123,123.0.0.1,localhost'
+).split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -127,6 +133,11 @@ DJOSER = {
         'current_user': 'api.serializers.UsersSerializer',
     },
     'HIDE_USERS': False,
+    'LOGIN_FIELD': 'email',
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MIN_VALUE = 1
+
+MAX_VALUE = 32000

@@ -17,14 +17,24 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ('name', 'color',)
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = IngredientAmount
+
+    def get_min_num(self, request, obj=None, **kwargs):
+        min_num = 10
+        if obj:
+            return min_num
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', 'in_favorites', )
     list_filter = ('name', 'author', 'tags', )
     search_fields = ('name', )
+    inlines = (RecipeIngredientInline, )
 
     def in_favorites(self, obj):
-        return Favorite.objects.filter(recipe=obj).count()
+        return obj.recipe_in_favorites.filter(recipe=obj).count()
 
     in_favorites.short_description = 'Добавлен в избранное'
 
