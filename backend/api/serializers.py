@@ -20,12 +20,13 @@ class UsersSerializer(UserSerializer):
             'last_name', 'is_subscribed',
         )
 
-    def create(self, validated_data):
-        print(validated_data)
-        user = User.objects.create_user(
-            **validated_data
+    def create(self, validateddata):
+        password = validateddata.pop('password', None)
+        user = User.objects.createuser(
+            validateddata
         )
-        user.set_password(validated_data['password'])
+        if password:
+            user.setpassword(password)
         user.save()
         return user
 
