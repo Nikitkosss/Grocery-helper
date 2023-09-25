@@ -94,7 +94,6 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientsInRecipeSerializer(
         many=True,
         required=True,
-        source='ingredientamount_set',
     )
     is_favorited = serializers.SerializerMethodField(
         read_only=True,
