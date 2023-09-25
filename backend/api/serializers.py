@@ -23,7 +23,7 @@ class UsersSerializer(UserSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         user = User.objects.create_user(
-            validated_data
+            **validated_data
         )
         if password:
             user.set_password(password)
