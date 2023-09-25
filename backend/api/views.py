@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import list_route
 
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (CreateUpdateRecipeSerializer,
@@ -102,6 +103,12 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
+
+    @list_route(permission_classes=[IsAuthenticated])
+    def me(self, request):
+        self.object = get_object_or_404(User, pk=request.user.id)
+        serializer = self.get_serializer(self.object)
+        return Response(serializer.data)
 
     @action(
         detail=True,
