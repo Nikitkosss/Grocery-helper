@@ -8,10 +8,10 @@ v1_router = DefaultRouter()
 v1_router.register("tags", TagViewSet, "tags")
 v1_router.register("ingredients", IngredientViewSet, "ingredients")
 v1_router.register("recipes", RecipeViewSet, "recipes")
-v1_router.register('users', UsersViewSet, basename='users')
+v1_router.register("users", UsersViewSet, basename="users")
 
 urlpatterns = (
-    path('v1/', include(v1_router.urls)),
+    path("", include(v1_router.urls)),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
 )
