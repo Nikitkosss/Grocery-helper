@@ -32,7 +32,7 @@ class UsersSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
-            return Subscriptions.signed_user.filter(
+            return Subscriptions.objects.filter(
                 user=self.context['request'].user,
                 author=obj
             ).exists()
@@ -51,7 +51,7 @@ class SubscriptionsSerializer(UsersSerializer):
         return Recipe.recipe_author.filter(author=obj)
 
     def get_recipes_count(self, obj):
-        return Recipe.recipe_author.filter(author=obj).count
+        return Recipe.objects.filter(author=obj).count
 
 
 class TagSerializer(serializers.ModelSerializer):
