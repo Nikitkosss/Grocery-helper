@@ -78,7 +78,6 @@ class IngredientsInRecipeSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source='ingredient.name')
     units = serializers.ReadOnlyField(source='ingredient.units')
     amount = serializers.IntegerField(
-        source='ingredient.amount',
         min_value=MIN_VALUE,
         max_value=MAX_VALUE,
     )
