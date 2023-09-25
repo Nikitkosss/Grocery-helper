@@ -20,11 +20,6 @@ class UsersSerializer(UserSerializer):
             'last_name', 'is_subscribed',
         )
 
-    def create(self, validated_data):
-        return User.objects.create_user(
-            **validated_data
-        )
-
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
             return Subscriptions.signed_user.filter(
