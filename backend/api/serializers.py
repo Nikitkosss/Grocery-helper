@@ -51,7 +51,7 @@ class SubscriptionsSerializer(UsersSerializer):
         return Recipe.objects.filter(author=obj)
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj).count
+        return Recipe.objects.filter(author=obj).count()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -94,7 +94,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientsInRecipeSerializer(
         many=True,
         required=True,
-        source='recipe',
+        source='ingredientamount_set',
     )
     is_favorited = serializers.SerializerMethodField(
         read_only=True,
