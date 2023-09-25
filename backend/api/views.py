@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
                             Recipe, Tag)
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, list_route
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -102,7 +102,11 @@ class UsersViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
 
-    @list_route(permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=('GET', 'PUT',),
+        permission_classes=(IsAuthenticated,)
+    )
     def me(self, request):
         self.object = get_object_or_404(User, pk=request.user.id)
         serializer = self.get_serializer(self.object)
