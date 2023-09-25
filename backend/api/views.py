@@ -103,6 +103,17 @@ class UsersViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
 
+    def user_register(request):
+        if request.request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+        user = User.objects.create_user(
+            name=username,
+            password=password,
+        )
+        user.set_password(password)
+        user.save()
+
     @action(
         detail=True,
         methods=('POST', 'DELETE',),
