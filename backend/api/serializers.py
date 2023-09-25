@@ -17,7 +17,7 @@ class UsersSerializer(UserSerializer):
         model = User
         fields = (
             'id', 'email', 'username', 'first_name',
-            'last_name', 'is_subscribed',
+            'last_name', 'is_subscribed', 'password',
         )
 
     def create(self, validated_data):
