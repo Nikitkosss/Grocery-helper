@@ -48,7 +48,7 @@ class SubscriptionsSerializer(UsersSerializer):
         read_only_fields = ('email', 'username', 'last_name', 'first_name',)
 
     def get_recipes(self, obj):
-        return Recipe.recipe_author.filter(author=obj)
+        return Recipe.objects.filter(author=obj)
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count
@@ -114,14 +114,14 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_cart(self, obj):
         if self.context['request'].user.is_authenticated:
-            return Cart.item_in_carts.filter(
+            return Cart.objects.filter(
                 user=self.context['request'].user, recipe=obj
             ).exists()
         return False
 
     def get_is_favorite(self, obj):
         if self.context['request'].user.is_authenticated:
-            return obj.recipe_in_favorites.filter(
+            return Favorite.objects.filter(
                 user=self.context['request'].user, recipe=obj
             ).exists()
         return False
