@@ -1,13 +1,13 @@
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
+                            Recipe, Tag)
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
+from users.models import Subscriptions, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
-from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
-                            Recipe, Tag)
-from users.models import Subscriptions, User
 
 
 class UsersSerializer(UserSerializer):

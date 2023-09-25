@@ -1,20 +1,18 @@
-from django.db.models import Sum
-from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.decorators import list_route
-
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (CreateUpdateRecipeSerializer,
                              IngredientSerializer, RecipeSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UsersSerializer)
+from django.db.models import Sum
+from django.http.response import HttpResponse
+from django.shortcuts import get_object_or_404
 from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
                             Recipe, Tag)
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, list_route
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from users.models import Subscriptions, User
 
 
