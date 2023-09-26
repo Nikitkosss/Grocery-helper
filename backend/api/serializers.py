@@ -75,16 +75,13 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientsInRecipeSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id',)
     name = serializers.ReadOnlyField(source='ingredient.name')
     units = serializers.ReadOnlyField(source='ingredient.units')
-    amount = serializers.IntegerField(
-        min_value=MIN_VALUE,
-        max_value=MAX_VALUE,
-    )
 
     class Meta:
         model = IngredientAmount
-        fields = ('name', 'amount', 'units',)
+        fields = ('id', 'name', 'amount', 'units',)
 
 
 class RecipeSerializer(serializers.ModelSerializer):
