@@ -1,3 +1,4 @@
+from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (CreateUpdateRecipeSerializer,
                              IngredientSerializer, RecipeSerializer,
@@ -15,7 +16,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscriptions, User
-from api.filters import IngredientFilter, RecipeFilter
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
