@@ -81,7 +81,7 @@ class IngredientsInRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientAmount
-        fields = ('id', 'name', 'amount', 'units',)
+        fields = '__all__'
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -123,9 +123,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
-    ingredients = IngredientSerializer(
+    ingredients = IngredientsInRecipeSerializer(
         many=True,
-        required=True,
     )
     tags = PrimaryKeyRelatedField(
         many=True,
