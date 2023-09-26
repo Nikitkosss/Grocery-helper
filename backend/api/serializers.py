@@ -148,14 +148,14 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def ingredient_create(self, recipe, ingredients):
+    def ingredient_create(self, recipe, data):
         return IngredientAmount.objects.bulk_create([
             IngredientAmount(
                 recipe=recipe,
-                ingredient_id=ingredient['id'],
-                amount=ingredient['amount'],
+                ingredient_id=item['ingredients']['id'],
+                amount=item['amount'],
             )
-            for ingredient in ingredients
+            for item in data
         ])
 
     def validate(self, obj):
@@ -186,15 +186,15 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(author=author, **validated_data)
         for tag in tags:
             recipe.tags.add(tag)
-        ingredients = validated_data.pop('ingredients')
-        self.ingredient_create(recipe, ingredients)
+        # ingredients = validated_data.pop('ingredients')
+        self.ingredient_create(recipe, validated_data)
         return recipe
 
     def update(self, recipe, validated_data):
         if 'ingredients' in validated_data:
-            ingredients = validated_data.pop('ingredients')
+            # ingredients = validated_data.pop('ingredients')
             recipe.ingredients.clear()
-            self.ingredient_create(recipe, ingredients)
+            self.ingredient_create(recipe, validated_data)
         if 'tags' in validated_data:
             tags_data = validated_data.pop('tags')
             recipe.tags.set(tags_data)
