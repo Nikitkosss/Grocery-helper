@@ -149,7 +149,7 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def ingredient_create(recipe, ingredients):
+    def ingredient_create(self, recipe, ingredients):
         return IngredientAmount.objects.bulk_create([
             IngredientAmount(
                 recipe=recipe,
