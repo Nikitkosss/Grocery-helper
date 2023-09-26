@@ -153,6 +153,7 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
             IngredientAmount(
                 recipe=recipe,
                 ingredient_id=ingredient['id'],
+                amount=ingredient['amount'],
             )
             for ingredient in ingredients
         ])
