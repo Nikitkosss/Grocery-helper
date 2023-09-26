@@ -152,10 +152,10 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         return IngredientAmount.objects.bulk_create([
             IngredientAmount(
                 recipe=recipe,
-                ingredient_id=item['id'],
-                amount=item['amount'],
+                ingredient_id=ingredient['id'],
+                amount=ingredient['amount'],
             )
-            for item in ingredients
+            for ingredient in ingredients
         ])
 
     def validate(self, obj):
