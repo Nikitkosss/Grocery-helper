@@ -152,7 +152,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
-        self.object = get_object_or_404(User, pk=request.user.id)
+        self.object = get_object_or_404(User, id=request.user.id)
         serializer = self.get_serializer(self.object)
         return Response(serializer.data)
 
