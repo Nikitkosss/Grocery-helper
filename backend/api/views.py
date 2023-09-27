@@ -153,7 +153,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     )
     def me(self, request):
         self.object = get_object_or_404(User, id=request.user.id)
-        serializer = UsersSerializer(self.object)
+        serializer = self.get_serializer(self.object)
         return Response(serializer.data)
 
     @action(
