@@ -5,7 +5,7 @@ from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-from users.models import Subscriptions, User
+from users.models import Follow, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
 
@@ -32,14 +32,14 @@ class UsersSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
-            return Subscriptions.objects.filter(
+            return Follow.objects.filter(
                 user=self.context['request'].user,
                 author=obj
             ).exists()
         return False
 
 
-class SubscriptionsSerializer(UsersSerializer):
+class FollowSerializer(UsersSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 

@@ -37,7 +37,7 @@ class User(AbstractUser):
         return self.username
 
 
-class Subscriptions(models.Model):
+class Follow(models.Model):
     author = models.ForeignKey(
         User,
         verbose_name='Автор рецепта',
@@ -67,4 +67,4 @@ class Subscriptions(models.Model):
         )
 
     def __str__(self):
-        return str(self.user)
+        return f'{self.user.username} - {self.author.username}'

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import Subscriptions, User
+from users.models import Follow, User
 
 
 @admin.register(User)
@@ -15,8 +15,8 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('email', 'username',)
 
 
-@admin.register(Subscriptions)
-class SubscriptionsAdmin(admin.ModelAdmin):
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user', 'author',)
     list_editable = ('user', 'author')

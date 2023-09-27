@@ -2,7 +2,7 @@ from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (CreateUpdateRecipeSerializer,
                              IngredientSerializer, RecipeSerializer,
-                             SubscriptionsSerializer, TagSerializer,
+                             FollowSerializer, TagSerializer,
                              UsersSerializer)
 from django.db.models import Sum
 from django.http.response import HttpResponse
@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from users.models import Subscriptions, User
+from users.models import Follow, User
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -129,16 +129,16 @@ class UsersViewSet(viewsets.ModelViewSet):
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
         if request.method == 'POST':
-            serializer = SubscriptionsSerializer(author,
-                                                 data=request.data,
-                                                 context={'request': request})
+            serializer = FollowSerializer(author,
+                                          data=request.data,
+                                          context={'request': request})
             serializer.is_valid(raise_exception=True)
-            Subscriptions.objects.create(user=user, author=author)
+            Follow.objects.create(user=user, author=author)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
             )
-        get_object_or_404(Subscriptions, user=user, author=author).delete()
+        get_object_or_404(Follow, user=user, author=author).delete()
         return Response({'detail': 'Вы отписались.'},
                         status=status.HTTP_204_NO_CONTENT)
 
@@ -147,7 +147,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def subscriptions(self, request):
-        serializer = SubscriptionsSerializer(
+        serializer = FollowSerializer(
             self.paginate_queryset(
                 User.objects.filter(author__user=request.user)
             ),
