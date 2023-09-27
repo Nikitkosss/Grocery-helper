@@ -4,7 +4,7 @@ from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
-from users.models import Follow, User
+from users.models import Subscribe, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
 
@@ -31,20 +31,26 @@ class UsersSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
-            return Follow.objects.filter(
+            return Subscribe.objects.filter(
                 user=self.context['request'].user,
                 author=obj
             ).exists()
         return False
 
 
-class FollowSerializer(UsersSerializer):
+class SubscribeSerializer(UsersSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta(UsersSerializer.Meta):
         fields = UsersSerializer.Meta.fields + ('recipes', 'recipes_count',)
         read_only_fields = ('email', 'username', 'last_name', 'first_name',)
+
+    def get_is_subscribed(self, obj):
+        request = self.context['request']
+        if request.user.is_anonymous:
+            return False
+        return Subscribe.objects.filter(user=request.user, author=obj).exists()
 
     def get_recipes(self, obj):
         return Recipe.objects.filter(author=obj)
@@ -208,12 +214,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
         fields = '__all__'
 
-
-class IngredientAmountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IngredientAmount
-        fields = '__all__'
-
     def validate(self, data):
         user = self.context['request'].user
         recipe = data['recipe']
@@ -226,3 +226,36 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         return RecipeSerializer(
             instance.recipe,
             context={'request': self.context['request']}).data
+
+
+class IngredientAmountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IngredientAmount
+        fields = '__all__'
+
+
+class SubscribeCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания подписки."""
+
+    class Meta:
+        model = Subscribe
+        fields = ('user', 'author')
+
+    def validate(self, data):
+        user = self.context['request'].user
+        author = data['author']
+        if user == author:
+            raise serializers.ValidationError({
+                'errors': 'Нельзя подписаться на себя.'
+            })
+        if Subscribe.objects.filter(user=user, author=author).exists():
+            raise serializers.ValidationError({
+                'errors': 'Вы уже подписаны на этого автора.'
+            })
+        return data
+
+    def to_representation(self, instance):
+        return SubscribeSerializer(
+            instance.author,
+            context={'request': self.context['request']}
+        ).data

@@ -37,7 +37,7 @@ class User(AbstractUser):
         return self.username
 
 
-class Follow(models.Model):
+class Subscribe(models.Model):
     author = models.ForeignKey(
         User,
         verbose_name='Автор рецепта',
