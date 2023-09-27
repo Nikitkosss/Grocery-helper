@@ -8,8 +8,8 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
-                            Recipe, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -73,8 +73,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            return Cart.objects.create(user=user, recipe=recipe)
-        return Cart.objects.create(user=user, recipe=recipe).delete()
+            return ShoppingCart.objects.create(user=user, recipe=recipe)
+        return ShoppingCart.objects.create(user=user, recipe=recipe).delete()
 
     @action(
         detail=False,
@@ -86,7 +86,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = IngredientAmount.objects.filter(
             recipe__cart__user=user).values(
             'ingredient__name',
-            'ingredient__units').annotate(
+            'ingredient__measurement_unit').annotate(
             amount=Sum('amount')
         )
         data = []
@@ -94,7 +94,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             data.append(
                 f'{ingredient["ingredient__name"]} - '
                 f'{ingredient["amount"]} '
-                f'{ingredient["ingredient__units"]}'
+                f'{ingredient["ingredient__measurement_unit"]}'
             )
         content = 'Список покупок:\n\n' + '\n'.join(data)
         filename = 'shopping_list.txt'

@@ -44,7 +44,7 @@ class Ingredient(models.Model):
         verbose_name="Ингридиент",
         max_length=100,
     )
-    units = models.CharField(
+    measurement_unit = models.CharField(
         verbose_name="Единицы измерения",
         max_length=24,
     )
@@ -55,7 +55,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return self.name
+        return f'{self.name}, {self.measurement_unit}.'
 
 
 class Recipe(models.Model):
@@ -109,7 +109,7 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
-        return self.name
+        return f'{self.author.email}, {self.name}'
 
 
 class IngredientAmount(models.Model):
@@ -178,7 +178,7 @@ class Favorite(models.Model):
         return str(self.user)
 
 
-class Cart(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name='Владелец списка',

@@ -20,9 +20,9 @@ class Command(BaseCommand):
             reader = csv.reader(file)
             next(reader)
             for row in reader:
-                name, units = row
+                name, measurement_unit = row
                 ingredients.append(
-                    Ingredient(name=name, units=units)
+                    Ingredient(name=name, measurement_unit=measurement_unit)
                 )
         try:
             Ingredient.objects.bulk_create(ingredients)

@@ -1,11 +1,11 @@
 from django.contrib import admin
-from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
-                            Recipe, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'units')
+    list_display = ('id', 'name', 'measurement_unit')
     list_filter = ('name', )
     search_fields = ('name', )
 
@@ -50,7 +50,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     search_fields = ('user', 'recipe', )
 
 
-@admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'item', )
     search_fields = ('user', 'item', )
