@@ -57,11 +57,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @staticmethod
-    def create_obj(request, id, serializers):
+    def create_obj(request, pk, serializers):
         user = request.user
-        recipe = get_object_or_404(Recipe, id=id)
+        recipe = get_object_or_404(Recipe, id=pk)
         data = {'user': user.id,
-                'recipe': recipe.id}
+                'recipe': recipe.pk}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -72,15 +72,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-    def favorite(self, request, id):
+    def favorite(self, request, pk):
         if request.method == 'POST':
             return self.create_obj(
                 request=request,
-                id=id,
+                pk=pk,
                 serializers=FavoriteSerializer)
 
         if request.method == 'DELETE':
-            fav_rec = Favorite.objects.filter(recipe_id=id)
+            fav_rec = Favorite.objects.filter(recipe_id=pk)
             if fav_rec.exists():
                 fav_rec.delete()
                 return Response(
@@ -96,14 +96,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         pagination_class=None
     )
-    def shopping_cart(self, request, id):
+    def shopping_cart(self, request, pk):
         if request.method == 'POST':
             return self.create_obj(
                 request=request,
-                id=id,
+                pk=pk,
                 serializers=ShoppingCartSerializer)
         if request.method == 'DELETE':
-            rec_in_cart = ShoppingCart.objects.filter(recipe_id=id)
+            rec_in_cart = ShoppingCart.objects.filter(recipe_id=pk)
             if rec_in_cart.exists():
                 rec_in_cart.delete()
                 return Response(
@@ -162,8 +162,8 @@ class UsersViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated, ],
         url_path='subscribe'
     )
-    def subscribe(self, request, id=None):
-        author = get_object_or_404(User, id=id)
+    def subscribe(self, request, pk=None):
+        author = get_object_or_404(User, id=pk)
         user = request.user
         if request.method == 'POST':
             serializer = SubscribeCreateSerializer(
