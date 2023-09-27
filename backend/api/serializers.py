@@ -4,7 +4,6 @@ from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator
 from users.models import Follow, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
@@ -189,13 +188,19 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = '__all__'
-        validators = (
-            UniqueTogetherValidator(
-                queryset=Favorite.objects.all(),
-                fields=('user', 'recipe'),
-                message='Рецепт уже добавлен в избранное.'
-            )
-        )
+
+    def validate(self, data):
+        user = self.context['request'].user
+        recipe = data['recipe']
+        if user.favorites.filter(recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'errors': 'Рецепт уже добавлен!'})
+        return data
+
+    def to_representation(self, instance):
+        return RecipeSerializer(
+            instance.recipe,
+            context={'request': self.context['request']}).data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
