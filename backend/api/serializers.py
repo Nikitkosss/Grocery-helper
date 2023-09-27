@@ -32,7 +32,6 @@ class UsersSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
             return Subscribe.objects.filter(
-                user=self.context['request'].user,
                 author=obj
             ).exists()
         return False

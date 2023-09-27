@@ -178,7 +178,7 @@ class UsersViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            subscription = Subscribe.objects.filter(user=user, author=author)
+            subscription = Subscribe.objects.filter(author=author)
             if subscription.exists():
                 subscription.delete()
                 return Response(
