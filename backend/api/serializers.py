@@ -248,7 +248,7 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'errors': 'Нельзя подписаться на себя.'
             })
-        if Subscribe.objects.filter(user=user, author=author).exists():
+        if Subscribe.objects.filter(author=author).exists():
             raise serializers.ValidationError({
                 'errors': 'Вы уже подписаны на этого автора.'
             })
