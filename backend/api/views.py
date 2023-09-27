@@ -63,7 +63,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         data = {'user': user.id,
                 'recipe': recipe.pk}
         serializer = serializers(data=data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
