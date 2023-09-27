@@ -102,12 +102,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = (
-            'id', 'tags', 'author', 'ingredients',
-            'is_favorited',
-            'name', 'image', 'text', 'cooking_time',
-            'is_cart',
-        )
+        fields = '__all__'
 
     def get_is_cart(self, obj):
         if self.context['request'].user.is_authenticated:
@@ -152,9 +147,7 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'ingredients', 'tags',
-                  'image', 'name', 'text',
-                  'cooking_time', 'author')
+        fields = '__all__'
 
     def ingredient_create(self, recipe, ingredients):
         return IngredientAmount.objects.bulk_create([
