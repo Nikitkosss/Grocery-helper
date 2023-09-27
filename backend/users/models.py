@@ -60,10 +60,6 @@ class Subscribe(models.Model):
                 fields=('user', 'author',),
                 name='Уникальность подписки'
             ),
-            models.CheckConstraint(
-                check=models.Q(user=models.F('author')),
-                name='Проверка самоподписки'
-            )
         )
 
     def __str__(self):
