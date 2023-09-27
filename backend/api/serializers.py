@@ -96,7 +96,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField(
         read_only=True,
     )
-    is_ = serializers.SerializerMethodField(
+    is_cart = serializers.SerializerMethodField(
         read_only=True,
     )
 
