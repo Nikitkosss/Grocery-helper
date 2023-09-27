@@ -57,11 +57,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @staticmethod
-    def create_obj(request, pk, serializers):
+    def create_obj(request, id, serializers):
         user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
+        recipe = get_object_or_404(Recipe, id=id)
         data = {'user': user.id,
-                'recipe': recipe.pk}
+                'recipe': recipe.id}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -72,15 +72,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-    def favorite(self, request, pk):
+    def favorite(self, request, id):
         if request.method == 'POST':
             return self.create_obj(
                 request=request,
-                pk=pk,
+                id=id,
                 serializers=FavoriteSerializer)
 
         if request.method == 'DELETE':
-            fav_rec = Favorite.objects.filter(recipe_id=pk)
+            fav_rec = Favorite.objects.filter(recipe_id=id)
             if fav_rec.exists():
                 fav_rec.delete()
                 return Response(
@@ -96,14 +96,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         pagination_class=None
     )
-    def shopping_cart(self, request, pk):
+    def shopping_cart(self, request, id):
         if request.method == 'POST':
             return self.create_obj(
                 request=request,
-                pk=pk,
+                id=id,
                 serializers=ShoppingCartSerializer)
         if request.method == 'DELETE':
-            rec_in_cart = ShoppingCart.objects.filter(recipe_id=pk)
+            rec_in_cart = ShoppingCart.objects.filter(recipe_id=id)
             if rec_in_cart.exists():
                 rec_in_cart.delete()
                 return Response(
