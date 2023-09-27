@@ -3,7 +3,8 @@ from api.permissions import AuthorOrReadOnly
 from api.serializers import (CreateUpdateRecipeSerializer,
                              IngredientSerializer, RecipeSerializer,
                              FollowSerializer, TagSerializer,
-                             UsersSerializer)
+                             UsersSerializer, FavoriteSerializer,
+                             ShoppingCartSerializer)
 from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -41,6 +42,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
+    def get_queryset(self):
+        return Recipe.objects.all()
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeSerializer
@@ -52,39 +56,72 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
-    @action(
-        detail=True,
-        methods=('POST', 'DELETE',),
-        permission_classes=(IsAuthenticated,)
-    )
-    def favorite(self, request, pk):
+    @staticmethod
+    def create_obj(request, pk, serializers):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        if request.method == 'POST':
-            return Favorite.objects.create(user=user, recipe=recipe)
-        return Favorite.objects.filter(user=user, recipe=recipe).delete()
+        data = {'user': user.id,
+                'recipe': recipe.pk}
+        serializer = serializers(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
-        methods=('POST', 'DELETE',),
-        permission_classes=(IsAuthenticated,)
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
     )
-    def cart(self, request, pk=None):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
+    def favorite(self, request, pk):
         if request.method == 'POST':
-            return ShoppingCart.objects.create(user=user, recipe=recipe)
-        return ShoppingCart.objects.create(user=user, recipe=recipe).delete()
+            return self.create_obj(
+                request=request,
+                pk=pk,
+                serializers=FavoriteSerializer)
+
+        if request.method == 'DELETE':
+            fav_rec = Favorite.objects.filter(recipe_id=pk)
+            if fav_rec.exists():
+                fav_rec.delete()
+                return Response(
+                    {'message': 'Рецепт удален из избранного'},
+                    status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {'errors': 'Рецепт уже удален!'},
+                status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated],
+        pagination_class=None
+    )
+    def shopping_cart(self, request, pk):
+        if request.method == 'POST':
+            return self.create_obj(
+                request=request,
+                pk=pk,
+                serializers=ShoppingCartSerializer)
+        if request.method == 'DELETE':
+            rec_in_cart = ShoppingCart.objects.filter(recipe_id=pk)
+            if rec_in_cart.exists():
+                rec_in_cart.delete()
+                return Response(
+                    {'message': 'Рецепт удален из списка покупок'},
+                    status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {'errors': 'Рецепт уже удален из списка покупок!'},
+                status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=False,
         methods=('GET',),
         permission_classes=(IsAuthenticated,)
     )
-    def download_cart(self, request):
+    def download_shopping_cart(self, request):
         user = request.user
         ingredients = IngredientAmount.objects.filter(
-            recipe__cart__user=user).values(
+            recipe__shopping_cart__user=user).values(
             'ingredient__name',
             'ingredient__measurement_unit').annotate(
             amount=Sum('amount')
