@@ -181,27 +181,26 @@ class Favorite(models.Model):
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
-        verbose_name='Владелец списка',
-        related_name='cart_onwer',
         on_delete=models.CASCADE,
+        verbose_name='Добавил в корзину',
+        related_name='shopping_cart',
     )
     recipe = models.ForeignKey(
         Recipe,
-        verbose_name="Рецепты в списке покупок",
-        related_name="recipe_in_carts",
         on_delete=models.CASCADE,
+        verbose_name='Рецепт в корзине',
+        related_name='shopping_cart',
     )
 
     class Meta:
-        ordering = ('recipe',)
         verbose_name = 'Список покупок'
-        verbose_name_plural = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'
         constraints = [
-            UniqueConstraint(
+            models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='Уникальный item списка покупок',
-            )
+                name='unique_shopping_cart'
+            ),
         ]
 
     def __str__(self):
-        return str(self.user)
+        return f'{self.user.username} - {self.recipe.name}'
