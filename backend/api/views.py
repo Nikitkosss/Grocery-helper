@@ -42,9 +42,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    def get_queryset(self):
-        return Recipe.objects.all()
-
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeSerializer
