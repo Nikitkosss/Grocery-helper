@@ -93,7 +93,6 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
-        read_only_fields = ('__all__',)
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
@@ -147,8 +146,18 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
 
+class IngredientInRecipeWriteSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField(min_value=MIN_VALUE,
+                                      max_value=MAX_VALUE)
+
+    class Meta:
+        model = IngredientAmount
+        fields = ('id', 'amount')
+
+
 class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
-    ingredients = IngredientsInRecipeSerializer(
+    ingredients = IngredientInRecipeWriteSerializer(
         many=True,
     )
     tags = PrimaryKeyRelatedField(
@@ -245,12 +254,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return RecipeSerializer(
             instance.recipe,
             context={'request': self.context['request']}).data
-
-
-class IngredientAmountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IngredientAmount
-        fields = '__all__'
 
 
 class SubscribeCreateSerializer(serializers.ModelSerializer):
