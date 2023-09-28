@@ -187,10 +187,12 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             ingredient_id = ingredient.get('id')
             amount = ingredient.get('amount')
-            ingredient_instance = IngredientAmount(ingredient_id=ingredient_id, recipe=recipe, amount=amount)
+            ingredient_instance = IngredientAmount(
+                ingredient_id=ingredient_id,
+                recipe=recipe, amount=amount
+            )
             ingredient_instances.append(ingredient_instance)
         return IngredientAmount.objects.bulk_create(ingredient_instances)
-
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
