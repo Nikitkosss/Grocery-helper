@@ -1,10 +1,10 @@
 from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import AuthorOrReadOnly
-from api.serializers import (CreateUpdateRecipeSerializer,
+from api.serializers import (CreateUpdateRecipeSerializer, FavoriteSerializer,
                              IngredientSerializer, RecipeSerializer,
+                             ShoppingCartSerializer, SubscribeCreateSerializer,
                              SubscribeSerializer, TagSerializer,
-                             UsersSerializer, FavoriteSerializer,
-                             ShoppingCartSerializer, SubscribeCreateSerializer)
+                             UsersSerializer)
 from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404

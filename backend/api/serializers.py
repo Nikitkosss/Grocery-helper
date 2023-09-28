@@ -1,5 +1,7 @@
+import base64
+
+from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
-from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import serializers
@@ -7,6 +9,18 @@ from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
 from users.models import Subscribe, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
+
+
+class Base64ImageFieldSerializer(serializers.ImageField):
+    """Сериализатор для декодирования картинки.
+       Декодирует строку base64."""
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
 
 
 class UsersSerializer(UserSerializer):
@@ -141,7 +155,7 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Tag.objects.all(),
     )
-    image = Base64ImageField(
+    image = Base64ImageFieldSerializer(
         required=False,
         allow_null=True,
     )
