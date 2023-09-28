@@ -154,10 +154,6 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         min_value=MIN_VALUE,
         max_value=MAX_VALUE,
     )
-    image = Base64ImageField(
-        required=False,
-        allow_null=True
-    )
 
     class Meta:
         model = Recipe
