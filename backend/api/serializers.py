@@ -45,16 +45,19 @@ class SubscribeSerializer(UsersSerializer):
         fields = UsersSerializer.Meta.fields + ('recipes', 'recipes_count',)
         read_only_fields = ('email', 'username', 'last_name', 'first_name',)
 
+    @staticmethod
     def get_is_subscribed(self, obj):
         request = self.context['request']
         if request.user.is_anonymous:
             return False
         return Subscribe.objects.filter(user=request.user, author=obj).exists()
 
-    def get_recipes(self, obj):
+    @staticmethod
+    def get_recipes(obj):
         return Recipe.objects.filter(author=obj)
 
-    def get_recipes_count(self, obj):
+    @staticmethod
+    def get_recipes_count(obj):
         return Recipe.objects.filter(author=obj).count()
 
 
