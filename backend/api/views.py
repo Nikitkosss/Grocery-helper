@@ -143,14 +143,14 @@ class UsersViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
 
-    @action(
-        detail=False,
-        methods=('GET', 'PUT',),
-        permission_classes=(IsAuthenticated,)
-    )
-    def me(self, request):
-        serializer = UsersSerializer(request.user)
-        return Response(serializer.data)
+#    @action(
+#        detail=False,
+#        methods=('GET', 'PUT',),
+#        permission_classes=(IsAuthenticated,)
+#    )
+#    def me(self, request):
+#        serializer = UsersSerializer(request.user)
+#        return Response(serializer.data)
 
     @action(
         detail=True,
