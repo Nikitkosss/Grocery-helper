@@ -101,7 +101,10 @@ class IngredientsInRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True
+    )
     author = UsersSerializer(read_only=True)
     ingredients = IngredientsInRecipeSerializer(
         many=True,
