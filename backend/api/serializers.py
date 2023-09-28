@@ -72,7 +72,7 @@ class SubscribeSerializer(UsersSerializer):
             recipes = Recipe.objects.all()[:(int(limit_recipes))]
         else:
             recipes = Recipe.objects.all()
-        return RecipeShortSerializer(
+        return RecipeSerializer(
             recipes,
             many=True,
             context={'request': request}
@@ -223,7 +223,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        return RecipeShortSerializer(
+        return RecipeSerializer(
             instance.recipe,
             context={'request': self.context['request']}).data
 
@@ -242,7 +242,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        return RecipeShortSerializer(
+        return RecipeSerializer(
             instance.recipe,
             context={'request': self.context['request']}).data
 
@@ -278,16 +278,3 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
             instance.author,
             context={'request': self.context['request']}
         ).data
-
-
-class RecipeShortSerializer(serializers.ModelSerializer):
-    image = Base64ImageFieldSerializer()
-
-    class Meta:
-        model = Recipe
-        fields = (
-            'id',
-            'name',
-            'image',
-            'cooking_time'
-        )
