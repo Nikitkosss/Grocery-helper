@@ -149,7 +149,10 @@ class UsersViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
-        serializer = UsersSerializer(request.user)
+        serializer = UsersSerializer(
+            request.user,
+            context={'request': request}
+        )
         return Response(serializer.data)
 
     @action(
