@@ -52,7 +52,17 @@ class SubscribeSerializer(UsersSerializer):
         return Subscribe.objects.filter(author=obj).exists()
 
     def get_recipes(self, obj):
-        return Recipe.objects.filter(author=obj)
+        request = self.context['request']
+        limit_recipes = request.query_params.get('recipes_limit')
+        if limit_recipes is not None:
+            recipes = Recipe.objects.all()[:(int(limit_recipes))]
+        else:
+            recipes = Recipe.objects.all()
+        return RecipeSerializer(
+            recipes,
+            many=True,
+            context={'request': request}
+        ).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
