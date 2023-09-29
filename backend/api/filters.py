@@ -41,7 +41,9 @@ class RecipeFilter(FilterSet):
                 if name == 'is_favorited':
                     queryset = queryset.filter(recipe_in_favorites__user=user)
                 if name == 'is_in_shopping_cart':
-                    queryset = queryset.filter(shopping_cart__user=user)
+                    queryset = queryset.filter(
+                        recipe_recipe_shopping_cart__user=user
+                    )
         return queryset
 
     class Meta:
