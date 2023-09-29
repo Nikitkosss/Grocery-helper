@@ -172,10 +172,6 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    cooking_time = serializers.IntegerField(
-        read_only=True,
-        min_value=MIN_VALUE,
-        max_value=MAX_VALUE)
 
     class Meta:
         model = Recipe

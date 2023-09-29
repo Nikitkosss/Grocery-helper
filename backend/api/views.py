@@ -13,10 +13,11 @@ from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscribe, User
+from rest_framework.filters import SearchFilter
+from api.paginations import RecipePagination
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,15 +32,16 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny,)
     filterset_class = IngredientFilter
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (SearchFilter,)
     pagination_class = None
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (AuthorOrReadOnly,)
-    pagination_class = PageNumberPagination
+    pagination_class = RecipePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -142,7 +144,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
     permission_classes = (AllowAny,)
-    pagination_class = PageNumberPagination
+    pagination_class = RecipePagination
 
     @action(
         detail=False,
