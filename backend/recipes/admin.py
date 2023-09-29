@@ -1,10 +1,11 @@
 from django.contrib import admin
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
+from import_export.admin import ImportExportModelAdmin
 
 
 @admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientAdmin(ImportExportModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     list_filter = ('name', )
     search_fields = ('name', )

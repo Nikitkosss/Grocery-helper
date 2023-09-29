@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'api',
     'recipes',
     'users',
+    'import-export',
 ]
 
 MIDDLEWARE = [
@@ -99,6 +100,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 STATIC_URL = '/static/'
 
