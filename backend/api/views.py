@@ -4,7 +4,7 @@ from api.serializers import (CreateUpdateRecipeSerializer, FavoriteSerializer,
                              IngredientSerializer, RecipeSerializer,
                              ShoppingCartSerializer, SubscribeCreateSerializer,
                              SubscribeSerializer, TagSerializer,
-                             UsersSerializer)
+                             UsersSerializer, SetPasswordSerializer)
 from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -203,3 +203,12 @@ class UsersViewSet(viewsets.ModelViewSet):
             context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
+
+    @action(detail=False, methods=['post'],
+            permission_classes=(IsAuthenticated,))
+    def set_password(self, request):
+        serializer = SetPasswordSerializer(request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response({'detail': 'Пароль успешно изменен!'},
+                        status=status.HTTP_204_NO_CONTENT)

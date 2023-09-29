@@ -1,5 +1,7 @@
 import base64
 
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions as django_exceptions
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
@@ -285,3 +287,31 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
             instance.author,
             context={'request': self.context['request']}
         ).data
+
+
+class SetPasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
+
+    def validate(self, obj):
+        try:
+            validate_password(obj['new_password'])
+        except django_exceptions.ValidationError as e:
+            raise serializers.ValidationError(
+                {'new_password': list(e.messages)}
+            )
+        return super().validate(obj)
+
+    def update(self, instance, validated_data):
+        if not instance.check_password(validated_data['current_password']):
+            raise serializers.ValidationError(
+                {'current_password': 'Неправильный пароль.'}
+            )
+        if (validated_data['current_password']
+           == validated_data['new_password']):
+            raise serializers.ValidationError(
+                {'new_password': 'Новый пароль должен отличаться от текущего.'}
+            )
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return validated_data
