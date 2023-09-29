@@ -179,7 +179,9 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = ('id', 'ingredients', 'tags',
+                  'image', 'name', 'text',
+                  'cooking_time', 'author')
 
     def ingredient_create(self, recipe, ingredients):
         ingredient_instances = []
