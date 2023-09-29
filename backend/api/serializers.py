@@ -179,51 +179,44 @@ class CreateUpdateRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'ingredients', 'tags',
-                  'image', 'name', 'text',
-                  'cooking_time', 'author')
+        fields = '__all__'
 
-    def create_ingredients(self, ingredients, recipe):
-        IngredientAmount.objects.bulk_create([
-            IngredientAmount(
-                ingredient=ingredient.get('id'),
-                recipe=recipe,
-                amount=ingredient.get('amount')
+    def ingredient_create(self, recipe, ingredients):
+        ingredient_instances = []
+        for ingredient in ingredients:
+            ingredient_id = ingredient.get('id')
+            amount = ingredient.get('amount')
+            ingredient_instance = IngredientAmount(
+                ingredient_id=ingredient_id,
+                recipe=recipe, amount=amount
             )
-            for ingredient in ingredients
-        ])
+            ingredient_instances.append(ingredient_instance)
+        return IngredientAmount.objects.bulk_create(ingredient_instances)
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        self.create_ingredients(ingredients, recipe)
+        self.ingredient_create(recipe, ingredients)
         return recipe
 
-    def update(self, instance, validated_data):
-        recipe = instance
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.name)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time
-        )
-        instance.tags.clear()
-        instance.ingredients.clear()
-        tags = validated_data.get('tags')
-        instance.tags.set(tags)
-        ingredients = validated_data.get('ingredients')
-        IngredientAmount.objects.filter(recipe=recipe).delete()
-        self.create_ingredients(ingredients, recipe)
-        instance.save()
-        return instance
+    def update(self, recipe, validated_data):
+        if 'ingredients' in validated_data:
+            ingredients = validated_data.pop('ingredients')
+            IngredientAmount.objects.filter(recipe=recipe).delete()
+            self.ingredient_create(recipe, ingredients)
+        if 'tags' in validated_data:
+            tags_data = validated_data.pop('tags')
+            recipe.tags.set(tags_data)
+        return super().update(recipe, validated_data)
 
     def to_representation(self, instance):
-        return RecipeSerializer(instance, context={
-            'request': self.context.get('request')
-        }).data
+        return RecipeSerializer(
+            instance,
+            context={
+                'request': self.context.get('request')
+            }).data
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
