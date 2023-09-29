@@ -70,11 +70,11 @@ class SubscribeSerializer(UsersSerializer):
         limit_recipes = request.query_params.get('recipes_limit')
         if limit_recipes is not None:
             recipes = Recipe.objects.filter(
-                author=self.context['request'].user
+                author=obj.author
             )[:(int(limit_recipes))]
         else:
             recipes = Recipe.objects.filter(
-                author=self.context['request'].user
+                author=obj.author
             )
         return RecipeSerializer(
             recipes,
