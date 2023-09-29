@@ -12,8 +12,6 @@ from backend.settings import MAX_VALUE, MIN_VALUE
 
 
 class Base64ImageFieldSerializer(serializers.ImageField):
-    """Сериализатор для декодирования картинки.
-       Декодирует строку base64."""
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -131,7 +129,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def get_is_cart(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         if self.context['request'].user.is_authenticated:
             return ShoppingCart.objects.filter(
                 user=self.context['request'].user, recipe=obj
@@ -261,7 +259,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class SubscribeCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания подписки."""
 
     class Meta:
         model = Subscribe
