@@ -17,6 +17,7 @@ git clone git@github.com:Nikitkosss/foodgram-project-react.git
 
 - На удаленном сервере создайте папку foodgram/
 - На удаленном сервере в папке проекта cоздайте файл .env:
+- Перенесети файл docker-compose.production.yml любым удобным способом в папку foodgram.
 ```
 POSTGRES_DB=<Имя_базы_данных>
 POSTGRES_USER=<Имя_пользователя_базы_данных>
@@ -55,21 +56,7 @@ server {
 sudo nginx -t
 sudo systemctl reload nginx
 ```
-- Откройте порты для фаервола и активируйте его:
-```
-sudo ufw allow 'Nginx Full'
-sudo ufw allow OpenSSH
-sudo ufw enable
-```
-- (Опционально) Получите SSL-сертификат для вашего доменного имени с помощью Certbot:
-```
-sudo apt install snapd
-sudo snap install core; sudo snap refresh core
-sudo snap install --classic certbot
-sudo ln -s /snap/bin/certbot /usr/bin/certbot 
-sudo certbot --nginx
-```
-
+- Запустите файл docker-compose.production.yml
 ### Автор backend'а:
 
 [Никита Пискунов](https://vk.com/peace_canoff)
