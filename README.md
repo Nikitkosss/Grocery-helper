@@ -17,13 +17,13 @@ git clone git@github.com:Nikitkosss/foodgram-project-react.git
 
 - На удаленном сервере создайте папку foodgram/
 - На удаленном сервере в папке проекта cоздайте файл .env:
-
+```
 POSTGRES_DB=<Имя_базы_данных>
 POSTGRES_USER=<Имя_пользователя_базы_данных>
 POSTGRES_PASSWORD=<Пароль_базы_данных>
 DB_HOST=db
 DB_PORT=5432
-
+```
 SECRET_KEY = 'ваш_secret_key'
 ALLOWED_HOSTS = ip_удаленного сервера, доменное имя, 127.0.0.1, localhost
 DEBUG = False
