@@ -2,9 +2,9 @@ from django.core import validators
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
-from users.models import User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
+from users.models import User
 
 
 class Tag(models.Model):
@@ -25,7 +25,7 @@ class Tag(models.Model):
         ),
     )
     slug = models.SlugField(
-        verbose_name="Слаг тэга",
+        verbose_name='Слаг тэга',
         max_length=100,
         unique=True,
     )
@@ -41,11 +41,11 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        verbose_name="Ингридиент",
+        verbose_name='Ингридиент',
         max_length=100,
     )
     measurement_unit = models.CharField(
-        verbose_name="Единицы измерения",
+        verbose_name='Единицы измерения',
         max_length=24,
     )
 
@@ -62,23 +62,23 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
-        verbose_name="Автор рецепта",
-        related_name="recipe_author",
+        verbose_name='Автор рецепта',
+        related_name='recipe_author',
         on_delete=models.SET_NULL,
         null=True,
     )
     name = models.CharField(
-        verbose_name="Название блюда",
+        verbose_name='Название блюда',
         max_length=100,
     )
     image = models.ImageField(
-        verbose_name="Изображение блюда",
+        verbose_name='Изображение блюда',
         upload_to='static/',
         null=True,
         blank=True,
     )
     text = models.TextField(
-        verbose_name="Описание блюда",
+        verbose_name='Описание блюда',
         max_length=256,
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -90,17 +90,17 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        verbose_name="Ингредиенты блюда",
-        related_name="recipes",
+        verbose_name='Ингредиенты блюда',
+        related_name='recipes',
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name="Тег",
-        related_name="recipes",
+        verbose_name='Тег',
+        related_name='recipes',
     )
 
     pub_date = models.DateTimeField(
-        verbose_name="Дата публикации",
+        verbose_name='Дата публикации',
         auto_now_add=True,
     )
 

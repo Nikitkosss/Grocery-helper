@@ -1,13 +1,13 @@
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-from users.models import Subscribe, User
 
 from backend.settings import MAX_VALUE, MIN_VALUE
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
+from users.models import User
 
 
 class UsersSerializer(UserSerializer):
@@ -27,7 +27,7 @@ class UsersSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         if not self.context['request'].user.is_anonymous:
-            return Subscribe.signed_user.filter(
+            return obj.signed_user.filter(
                 user=self.context['request'].user,
                 author=obj
             ).exists()
@@ -43,10 +43,10 @@ class SubscribeSerializer(UsersSerializer):
         read_only_fields = ('email', 'username', 'last_name', 'first_name',)
 
     def get_recipes(self, obj):
-        return Recipe.author.filter(author=obj)
+        return obj.author.filter(author=obj)
 
     def get_recipes_count(self, obj):
-        return Recipe.author.filter(author=obj).count
+        return obj.author.filter(author=obj).count
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -107,7 +107,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_cart(self, obj):
         if self.context['request'].user.is_authenticated:
-            return ShoppingCart.recipe_shopping_cart.filter(
+            return obj.recipe_shopping_cart.filter(
                 user=self.context['request'].user, recipe=obj
             ).exists()
         return False
